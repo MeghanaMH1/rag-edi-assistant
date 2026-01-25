@@ -1,0 +1,15 @@
+transaction_type,document_id,related_document_id,partner,status,created_date,expected_date,actual_date,remarks
+850,PO1001,,RetailerA,created,2025-01-01,2025-01-05,,Purchase order created
+855,ACK1001,PO1001,SupplierX,accepted,2025-01-02,2025-01-02,2025-01-02,PO acknowledged
+856,ASN1001,PO1001,SupplierX,delayed,2025-01-03,2025-01-06,,Shipment delayed due to warehouse issue
+810,INV1001,PO1001,SupplierX,pending,2025-01-07,2025-01-07,,Invoice pending shipment completion
+997,FA1001,INV1001,RetailerA,received,2025-01-08,2025-01-08,2025-01-08,Functional acknowledgment received
+
+850,PO1002,,RetailerB,created,2025-01-02,2025-01-06,,Purchase order created
+855,ACK1002,PO1002,SupplierY,accepted,2025-01-03,2025-01-03,2025-01-03,PO acknowledged
+856,ASN1002,PO1002,SupplierY,shipped,2025-01-04,2025-01-06,2025-01-05,Shipment sent on time
+810,INV1002,PO1002,SupplierY,paid,2025-01-07,2025-01-07,2025-01-07,Invoice paid successfully
+997,FA1002,INV1002,RetailerB,received,2025-01-08,2025-01-08,2025-01-08,Functional acknowledgment received
+
+850,PO1003,,RetailerC,created,2025-01-05,2025-01-10,,Purchase order created
+855,ACK1003,PO1003,SupplierZ,rejected,2025-01-06,2025-01-06,,PO rejected due to pricing mismatch

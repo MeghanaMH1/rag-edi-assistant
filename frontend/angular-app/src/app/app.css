@@ -1,0 +1,28 @@
+.app-shell {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: #000000;
+  color: #ffffff;
+}
+
+/* Header */
+.app-header {
+  padding: 20px 0;
+  text-align: center;
+}
+
+.app-title {
+  margin: 0;
+  font-size: 32px;
+  font-weight: 600;
+}
+
+/* Main area fills screen */
+.app-main {
+  flex: 1;
+  display: flex;
+  width: 100%;
+  overflow: hidden;
+}
+

@@ -1,0 +1,13 @@
+<h2>Ask a Question</h2>
+
+<input
+  type="text"
+  placeholder="e.g. What invoices are pending?"
+  [(ngModel)]="question"
+/>
+
+<br /><br />
+
+<button (click)="askQuestion()">Ask</button>
+
+<p>{{ answer }}</p>

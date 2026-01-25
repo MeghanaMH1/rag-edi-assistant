@@ -1,0 +1,54 @@
+<div class="chat-container">
+
+  <!-- Messages -->
+  <div class="chat-messages">
+  <div
+    *ngFor="let msg of messages"
+    class="message"
+    [class.user]="msg.role === 'user'"
+    [class.assistant]="msg.role === 'assistant'"
+  >
+    {{ msg.content }}
+  </div>
+
+  <!-- ✅ Upload indicator -->
+  <div class="message assistant thinking" *ngIf="uploading">
+    Uploading CSV…
+  </div>
+
+  <!-- AI thinking indicator -->
+  <div class="message assistant thinking" *ngIf="thinking">
+    Thinking…
+  </div>
+</div>
+
+
+  <!-- Input -->
+  <div class="chat-input-bar">
+
+    <input
+      type="file"
+      #fileInput
+      accept=".csv"
+      hidden
+      (change)="onFileSelected($event)"
+    />
+
+    <button class="icon-btn" (click)="fileInput.click()">＋</button>
+
+    <div class="file-chip" *ngIf="selectedFile">
+      {{ selectedFile.name }}
+      <button (click)="removeFile()">✕</button>
+    </div>
+
+    <input
+      class="chat-input"
+      type="text"
+      placeholder="Ask anything about EDI status…"
+      [(ngModel)]="question"
+      (keydown.enter)="send()"
+    />
+
+    <button class="send-btn" (click)="send()">➤</button>
+  </div>
+</div>

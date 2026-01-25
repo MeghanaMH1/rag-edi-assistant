@@ -1,0 +1,9 @@
+<h2>Upload EDI CSV</h2>
+
+<input type="file" accept=".csv" (change)="onFileSelected($event)" />
+
+<br /><br />
+
+<button (click)="uploadCsv()">Upload</button>
+
+<p>{{ message }}</p>
