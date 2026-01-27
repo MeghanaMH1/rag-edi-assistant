@@ -6,27 +6,65 @@ MODEL = "mistral"
 
 def explain_facts(facts: str) -> str:
     """
-    AI explanation layer (SAFE MODE).
+    AI explanation layer (STRICT + SAFE MODE).
 
-    - AI is used when available
-    - Deterministic results are NEVER blocked
-    - Ollama timeout or failure will NOT crash backend
+    GUARANTEES:
+    - AI NEVER decides logic
+    - AI NEVER adds facts
+    - AI NEVER explains business meaning
+    - AI NEVER blocks deterministic output
     """
 
-    prompt = f"""
-You are a controlled explanation engine.
+    # 🚨 EARLY EXIT FOR SYSTEM MESSAGES (NO AI CALL)
+    if not facts:
+        return facts
 
-Rules:
-- Use ONLY the information in Facts
-- Do NOT add new facts
-- Do NOT explain causes
-- Do NOT infer meaning
-- Keep the explanation short and neutral
+    lower_facts = facts.lower().strip()
+    if (
+        lower_facts.startswith("no csv")
+        or lower_facts.startswith("unsupported")
+        or lower_facts.startswith("no edi data")
+    ):
+        return facts
+
+    # -----------------------------
+    # AI PROMPT (ONLY FOR REAL DATA)
+    # -----------------------------
+    prompt = f"""
+You are a STRICT explanation engine for a deterministic EDI system.
+
+NON-NEGOTIABLE RULES:
+- Use ONLY the information explicitly present in the Facts section
+- Do NOT add new facts, documents, or interpretations
+- Do NOT explain what transaction types mean
+- Do NOT describe business processes
+- Do NOT explain causes, impacts, or reasons
+- Do NOT infer relationships beyond what is stated
+- Do NOT introduce domain knowledge
+- Do NOT speculate or summarize beyond the facts
+- Do NOT expand, rename, or interpret document IDs or transaction types
+- Always use document IDs exactly as provided (e.g., PO1001, FA1001)
+
+
+ALLOWED:
+- Rephrase facts for clarity
+- Group similar results
+- State counts (none / one / multiple)
+- Use short, neutral sentences
+
+STYLE REQUIREMENTS:
+- Professional
+- Concise
+- Neutral
+- Maximum 3–5 sentences
+- No bullet-point spam
+- No field-label repetition unless necessary
 
 Facts:
 {facts}
 
-Rewrite the facts in simple sentences.
+Task:
+Rewrite the above facts into a clear, neutral explanation.
 """
 
     try:
@@ -35,9 +73,13 @@ Rewrite the facts in simple sentences.
             json={
                 "model": MODEL,
                 "prompt": prompt,
-                "stream": False
+                "stream": False,
+                "options": {
+                    "temperature": 0.1,
+                    "top_p": 0.9
+                }
             },
-            timeout=30  # ⬅ shorter, safer timeout
+            timeout=20
         )
 
         response.raise_for_status()
@@ -48,9 +90,8 @@ Rewrite the facts in simple sentences.
             return explanation.strip()
 
     except Exception:
-        # 🔒 HARD GUARANTEE:
-        # Deterministic answers must ALWAYS return
+        # 🔒 AI failure must NEVER block deterministic output
         pass
 
-    # ✅ Deterministic fallback (NO CRASH)
+    # ✅ FINAL SAFETY FALLBACK
     return facts
