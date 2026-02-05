@@ -18,6 +18,21 @@
   font-weight: 600;
 }
 
+.lifecycle-btn {
+  margin-top: 12px;
+  background-color: #1a1a1a;
+  color: #ffffff;
+  border: 1px solid #2a2a2a;
+  border-radius: 8px;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.lifecycle-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 /* Main area fills screen */
 .app-main {
   flex: 1;

@@ -9,6 +9,8 @@ from .ai_explainer import explain_facts  # 🔑 keep AI warm-up
 
 app = FastAPI(title="RAG-Based EDI Assistant")
 
+from . import lifecycle_routes
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],

@@ -1,9 +1,22 @@
 <div class="app-shell">
   <header class="app-header">
     <h1 class="app-title">RAG-Based EDI Assistant</h1>
+    <button
+      class="lifecycle-btn"
+      [disabled]="isUploading || !lifecycleEnabled"
+      (click)="openLifecycle()"
+      title="{{ lifecycleEnabled ? 'Open Lifecycle Visualizer' : 'Upload CSV to view lifecycle' }}"
+    >
+      Lifecycle
+    </button>
   </header>
 
   <main class="app-main">
-    <app-chat-input></app-chat-input>
+    <app-chat-input (csvUploadedEvent)="onCsvUploaded()" (uploadingEvent)="onUploading($event)"></app-chat-input>
   </main>
+
+  <app-lifecycle-modal
+    [open]="lifecycleOpen"
+    (close)="closeLifecycle()"
+  ></app-lifecycle-modal>
 </div>

@@ -1,4 +1,4 @@
-import { Component, ChangeDetectorRef, NgZone } from '@angular/core';
+import { Component, ChangeDetectorRef, NgZone, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
@@ -21,6 +21,9 @@ export class ChatInputComponent {
   uploading = false;
   selectedFile: File | null = null;
   messages: ChatMessage[] = [];
+  csvUploaded = false;
+  @Output() csvUploadedEvent = new EventEmitter<void>();
+  @Output() uploadingEvent = new EventEmitter<boolean>();
 
   private API_URL = 'http://127.0.0.1:8000';
 
@@ -43,6 +46,7 @@ export class ChatInputComponent {
     formData.append('file', this.selectedFile);
 
     this.uploading = true;
+    this.uploadingEvent.emit(true);
     this.cdr.detectChanges();
 
 
@@ -54,7 +58,10 @@ export class ChatInputComponent {
             content: 'CSV uploaded successfully. Ask your question.',
           });
           this.uploading = false;
+          this.uploadingEvent.emit(false);
+          this.csvUploaded = true;
           this.cdr.detectChanges();
+          this.csvUploadedEvent.emit();
 
         });
       },
@@ -65,6 +72,8 @@ export class ChatInputComponent {
             content: 'CSV upload failed.',
           });
           this.uploading = false;
+          this.uploadingEvent.emit(false);
+          this.csvUploaded = false;
           this.cdr.detectChanges();
 
         });

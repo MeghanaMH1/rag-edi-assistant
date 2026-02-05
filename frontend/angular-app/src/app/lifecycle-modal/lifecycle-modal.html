@@ -1,0 +1,90 @@
+<div class="overlay" *ngIf="open">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>Lifecycle Visualizer</h2>
+      <button class="close-btn" (click)="closeModal()">✕</button>
+    </div>
+
+    <div class="modal-body">
+      <ng-container *ngIf="loadingPos; else poListStates">
+        <div class="loading">Loading PO list…</div>
+      </ng-container>
+      <ng-template #poListStates>
+        <div *ngIf="!csvLoaded" class="empty">
+          No CSV uploaded. Upload a CSV to view lifecycle.
+        </div>
+        <div *ngIf="csvLoaded && pos.length === 0" class="empty">
+          No Purchase Orders found.
+        </div>
+        <div *ngIf="csvLoaded && pos.length > 0" class="controls">
+          <label for="po-select">Select PO:</label>
+          <select id="po-select" [(ngModel)]="selectedPoId" (change)="onPoChange()">
+            <option [ngValue]="null" disabled hidden [selected]="selectedPoId == null">-- choose --</option>
+            <option *ngFor="let p of pos" [ngValue]="p.document_id">
+              {{ p.document_id }} • {{ p.partner || '—' }} • {{ p.status || '—' }} • {{ p.po_date || '—' }}
+            </option>
+          </select>
+          <button class="view-btn" (click)="viewLifecycle()" [disabled]="!selectedPoId || loadingLifecycle">
+            View Lifecycle
+          </button>
+        </div>
+      </ng-template>
+
+      <div *ngIf="loadingLifecycle" class="loading">Loading lifecycle…</div>
+      <div *ngIf="errorMsg" class="error">{{ errorMsg }}</div>
+
+      <div *ngIf="lifecycle && !loadingLifecycle" class="diagram" [class.loading]="loadingLifecycle">
+        <div class="node" [class.missing]="!getEvent('PO')?.document_id">
+          <div class="label">PO</div>
+          <div class="meta" *ngIf="getEvent('PO')?.document_id">
+            <div>{{ getEvent('PO')?.document_id }}</div>
+            <div>{{ getEvent('PO')?.status || '—' }}</div>
+            <div>{{ getEvent('PO')?.event_date || '—' }}</div>
+            <div>{{ getEvent('PO')?.partner || '—' }}</div>
+          </div>
+        </div>
+        <div class="arrow">→</div>
+        <div class="node" [class.missing]="!getEvent('ACK')?.document_id">
+          <div class="label">ACK</div>
+          <div class="meta" *ngIf="getEvent('ACK')?.document_id">
+            <div>{{ getEvent('ACK')?.document_id }}</div>
+            <div>{{ getEvent('ACK')?.status || '—' }}</div>
+            <div>{{ getEvent('ACK')?.event_date || '—' }}</div>
+            <div>{{ getEvent('ACK')?.partner || '—' }}</div>
+          </div>
+        </div>
+        <div class="arrow">→</div>
+        <div class="node" [class.missing]="!getEvent('ASN')?.document_id">
+          <div class="label">ASN</div>
+          <div class="meta" *ngIf="getEvent('ASN')?.document_id">
+            <div>{{ getEvent('ASN')?.document_id }}</div>
+            <div>{{ getEvent('ASN')?.status || '—' }}</div>
+            <div>{{ getEvent('ASN')?.event_date || '—' }}</div>
+            <div>{{ getEvent('ASN')?.partner || '—' }}</div>
+          </div>
+        </div>
+        <div class="arrow">→</div>
+        <div class="node" [class.missing]="!getEvent('INV')?.document_id">
+          <div class="label">INV</div>
+          <div class="meta" *ngIf="getEvent('INV')?.document_id">
+            <div>{{ getEvent('INV')?.document_id }}</div>
+            <div>{{ getEvent('INV')?.status || '—' }}</div>
+            <div>{{ getEvent('INV')?.event_date || '—' }}</div>
+            <div>{{ getEvent('INV')?.partner || '—' }}</div>
+          </div>
+        </div>
+        <div class="arrow">→</div>
+        <div class="node" [class.missing]="!getEvent('FA')?.document_id">
+          <div class="label">FA</div>
+          <div class="meta" *ngIf="getEvent('FA')?.document_id">
+            <div>{{ getEvent('FA')?.document_id }}</div>
+            <div>{{ getEvent('FA')?.status || '—' }}</div>
+            <div>{{ getEvent('FA')?.event_date || '—' }}</div>
+            <div>{{ getEvent('FA')?.partner || '—' }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

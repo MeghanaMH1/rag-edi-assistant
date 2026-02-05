@@ -1,14 +1,20 @@
 <div class="chat-container">
 
   <!-- Messages -->
-  <div class="chat-messages">
+  <div class="chat-messages" #messagesContainer>
+  <!-- Welcome / empty state -->
+  <div class="message assistant" *ngIf="messages.length === 0 && !uploading && !thinking">
+    Hi 👋 Upload an EDI CSV and ask questions.
+  </div>
   <div
     *ngFor="let msg of messages"
-    class="message"
+    class="message-row"
     [class.user]="msg.role === 'user'"
     [class.assistant]="msg.role === 'assistant'"
   >
-    {{ msg.content }}
+    <div class="message" [class.user]="msg.role === 'user'" [class.assistant]="msg.role === 'assistant'">
+      {{ msg.content }}
+    </div>
   </div>
 
   <!-- ✅ Upload indicator -->
@@ -44,11 +50,12 @@
     <input
       class="chat-input"
       type="text"
-      placeholder="Ask anything about EDI status…"
+      [placeholder]="uploading ? 'Uploading CSV… please wait' : (csvUploaded ? 'Ask about the uploaded EDI data…' : 'Upload a CSV to start chatting')"
+      [disabled]="!csvUploaded || uploading || thinking"
       [(ngModel)]="question"
       (keydown.enter)="send()"
     />
 
-    <button class="send-btn" (click)="send()">➤</button>
+    <button class="send-btn" (click)="send()" [disabled]="!csvUploaded || uploading || thinking">➤</button>
   </div>
 </div>
